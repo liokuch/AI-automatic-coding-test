@@ -1,0 +1,50 @@
+name: AI Trigger
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  trigger:
+    if: >
+      (
+        github.event_name == 'issue_comment' &&
+        !github.event.issue.pull_request &&
+        contains(github.event.comment.body, '@claude') &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      ) || (
+        github.event_name == 'issues' &&
+        github.event.label.name == 'ai-fix'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: ai-issue-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_TITLE: ${{ github.event.issue.title }}
+      TRIGGER_TYPE: ${{ github.event_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: 確認觸發器有啟動
+        run: |
+          echo "觸發方式: $TRIGGER_TYPE"
+          echo "Issue #$ISSUE_NUMBER: $ISSUE_TITLE"
+
+      # ---- 之後在這裡換成真正的 AI 步驟 ----
+
+      - name: 回覆 issue
+        run: |
+          gh issue comment "$ISSUE_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body "觸發器已啟動（方式：$TRIGGER_TYPE）。目前尚未接上 AI，這是測試訊息。"
