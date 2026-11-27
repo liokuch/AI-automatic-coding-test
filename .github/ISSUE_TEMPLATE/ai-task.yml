@@ -1,0 +1,44 @@
+name: AI 任務
+description: 交給 AI 處理的任務
+labels: []
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景與問題
+      description: 發生了什麼事？為什麼需要改？
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟（bug 才需要）
+      placeholder: |
+        1. 打開...
+        2. 點擊...
+        3. 看到錯誤...
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期結果
+      description: 完成後應該是什麼樣子？
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: 相關檔案或模組
+      placeholder: src/auth/login.ts
+  - type: textarea
+    id: scope
+    attributes:
+      label: 範圍限制
+      description: 哪些不要動？
+      placeholder: 不要修改資料庫 schema、不要新增套件
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收條件
+      description: 怎樣算完成？（例如要新增哪些測試）
+    validations:
+      required: true
